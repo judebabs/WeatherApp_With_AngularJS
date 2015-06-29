@@ -1,0 +1,104 @@
+﻿<!-- index.html -->
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<html ng-app="weatherApp">
+
+<head>
+    <!-- Here I am loading bootstrap, jquery ui and fontawesome via CDN styles fuiles-->
+    <link rel="stylesheet" href="css/jquery-ui.css"/>
+    <link rel="stylesheet" href="css/bootstrap.css"/>
+    <link href="css/custom.css" rel="stylesheet"/>
+
+    <!-- Here I am loading jquery, and angular and angular route scripts files-->
+    <script src="scripts/jquery-2.1.4.js"></script>
+    <script src="scripts/jquery-ui.js"></script>
+    <script src="scripts/bootstrap.js"></script>
+    <script src="scripts/angular.js"></script>
+    <script src="scripts/angular-route.js"></script>
+    <!--<script src="scripts/script.js"></script>-->
+    <title>Wheather App</title>
+</head>
+<body>
+
+
+
+<div class="container" ng-controller="weatherAppModule">
+    <div class="jumbotron" align="center">
+        <p><h1>WeatherApp<img src="images/weather2.png" style="width: 100px; width: 100px;" alt="logo"/></h1></p>
+    </div>
+    <br/>
+
+    <div class="row">
+        <div class="col-sm-4">
+
+        </div>
+        <div class="col-sm-4">
+            <h3>Please enter city :</h3>
+            <p>
+                <input type="text" ng-model="city" id="txtBoxCity" name="txtBoxCity" class="form-control input-md"/>
+            </p>
+            
+            <p align="center">
+                <button ng-click="getWeather()" class="btn btn-default" id="btnGetWeather">Get Weather</button>
+            </p>
+            
+            <p>Temperature: {{temperature}}</p>
+            <p>Humidity: {{humidity}}</p>
+            <p>Wind speed: {{wind}}</p>
+            <p>Cloud Cover: {{cloud}}</p>
+            
+        </div>
+        <div class="col-sm-4">
+
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    var app = angular.module('weatherApp', [])
+        .controller('weatherAppModule', function($scope, $http, $log) {
+            
+            $scope.city = '';
+          
+            $scope.getWeather = function() {
+                // Fetch the data from the public API through JSONP.
+                
+                var url = 'http://api.openweathermap.org/data/2.5/weather';
+
+                $http.jsonp(url, {
+                        params: {
+                            q: $scope.city,
+                            units: 'metric',
+                            callback: 'JSON_CALLBACK',
+                            appid: '5328cd083775795d8dd5a024b35969cc' // Api key 
+                        },
+                        headers: {
+                            'x-api-key': '5328cd083775795d8dd5a024b35969cc'
+                        }
+                    }).
+                    success(function(data, status, headers, config) {
+                        $scope.name = data.name;
+                        $scope.wind = data.wind.speed;
+                        $scope.humidity = data.main.humidity;
+                        $scope.temperature = data.main.temp;
+                        $scope.cloud = data.weather[0].description;
+                      
+
+                    }).
+                    error(function(data, status, headers, config) {
+                        // Log an error in the browser's console.
+                        $log.error('Could not retrieve data from ' + url);
+                    });
+            };
+
+           
+            $scope.getWeather();
+        });
+
+   
+   
+</script>
+
+</body>
+</html>
